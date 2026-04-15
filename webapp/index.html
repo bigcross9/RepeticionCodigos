@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter App</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0f2f5; }
+        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 80%; max-width: 400px; }
+        #progress-container { width: 100%; background: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 20px; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: #4caf50; transition: width 0.3s ease; }
+        button { padding: 15px 30px; font-size: 1.2rem; cursor: pointer; border: none; border-radius: 8px; background: #007bff; color: white; width: 100%; }
+        button:active { background: #0056b3; transform: scale(0.98); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Contador de Taps</h2>
+        <h1 id="counter">0</h1>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <button onclick="increment()">¡Tap!</button>
+        <p>Meta: 100 taps</p>
+    </div>
+
+    <script>
+        let count = 0;
+        const goal = 100;
+        const counterEl = document.getElementById('counter');
+        const progressBar = document.getElementById('progress-bar');
+
+        function increment() {
+            if (count < goal) {
+                count++;
+                counterEl.innerText = count;
+                const percentage = (count / goal) * 100;
+                progressBar.style.width = percentage + '%';
+            }
+        }
+    </script>
+</body>
+</html>
