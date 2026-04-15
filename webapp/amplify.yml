@@ -1,0 +1,11 @@
+version: 1
+frontend:
+  phases:
+    build:
+      commands: [] # No hay comandos porque es estático
+  artifacts:
+    baseDirectory: web-app # <--- AQUÍ pones el nombre de tu subcarpeta
+    files:
+      - '**/*'
+  cache:
+    paths: []
