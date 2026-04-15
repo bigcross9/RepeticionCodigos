@@ -3,96 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codigos Sagrados App</title>
+    <title>Códigos Sagrados Pro</title>
     <style>
-        :root { --primary: #007bff; --dark: #333; --light: #f4f4f4; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; background: #f0f2f5; }
-        
-        /* Header y Hamburguesa */
+        :root { --primary: #007bff; --dark: #333; --success: #4caf50; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; }
         header { background: var(--primary); color: white; padding: 1rem; display: flex; align-items: center; position: fixed; width: 100%; top: 0; z-index: 100; }
-        .menu-btn { cursor: pointer; font-size: 1.5rem; margin-right: 1rem; display: flex; flex-direction: column; gap: 5px; }
-        .menu-btn div { width: 25px; height: 3px; background: white; border-radius: 2px; }
-
-        /* Sidebar (Menú oculto) */
-        .sidebar { position: fixed; left: -250px; top: 0; width: 250px; height: 100%; background: var(--dark); color: white; transition: 0.3s; z-index: 200; padding-top: 60px; }
+        .menu-btn { cursor: pointer; padding: 10px; display: flex; flex-direction: column; gap: 5px; }
+        .menu-btn div { width: 25px; height: 3px; background: white; }
+        
+        .sidebar { position: fixed; left: -260px; top: 0; width: 250px; height: 100%; background: var(--dark); color: white; transition: 0.3s; z-index: 200; padding-top: 60px; }
         .sidebar.active { left: 0; }
-        .sidebar a { display: block; padding: 15px 25px; color: white; text-decoration: none; border-bottom: 1px solid #444; font-size: 0.9rem; }
-        .sidebar a:hover { background: #444; }
-
-        /* Overlay para cerrar el menú */
+        .sidebar a { display: block; padding: 15px 25px; color: white; text-decoration: none; border-bottom: 1px solid #444; cursor: pointer; }
+        
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 150; }
         .overlay.active { display: block; }
 
-        /* Contenido Principal */
-        .main-content { padding: 80px 20px 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 400px; }
+        .main-content { padding: 100px 20px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
         
-        /* Barra de Progreso */
-        #progress-container { width: 100%; background: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 20px; }
-        #progress-bar { width: 0%; height: 100%; background: #4caf50; transition: width 0.3s; border-radius: 10px; }
+        #progress-container { width: 100%; background: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 15px; }
+        #progress-bar { width: 0%; height: 100%; background: var(--success); transition: width 0.2s; border-radius: 10px; }
         
-        button { padding: 15px; font-size: 1.2rem; cursor: pointer; border: none; border-radius: 8px; background: var(--primary); color: white; width: 100%; }
+        button { padding: 20px; font-size: 1.5rem; cursor: pointer; border: none; border-radius: 12px; background: var(--primary); color: white; width: 100%; touch-action: manipulation; }
+        button:active { transform: scale(0.95); background: #0056b3; }
+        .info { font-size: 0.8rem; color: #666; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="menu-btn" onclick="toggleMenu()">
-            <div></div><div></div><div></div>
-        </div>
+        <div class="menu-btn" onclick="toggleMenu()"><div></div><div></div><div></div></div>
         <span>Códigos Sagrados</span>
     </header>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
     <nav class="sidebar" id="sidebar">
-        <a href="#" onclick="selectOption('Código Sagrado Crayon')">Código Sagrado Crayon</a>
-        <a href="#" onclick="selectOption('Desbloqueo de Códigos Sagrados')">Desbloqueo de Códigos</a>
-        <a href="#" onclick="selectOption('Flujo de Dinero')">Flujo de Dinero</a>
+        <a onclick="loadCategory('CODIGO.CRAYON')">Código Sagrado Crayon</a>
+        <a onclick="loadCategory('CODIGO.DESBLOQUEO')">Desbloqueo de Códigos</a>
+        <a onclick="loadCategory('CODIGO.DINERO')">Flujo de Dinero</a>
     </nav>
 
     <div class="main-content">
         <div class="card">
-            <h2 id="title">Selecciona una opción</h2>
-            <h1 id="counter">0</h1>
-            <div id="progress-container">
-                <div id="progress-bar"></div>
-            </div>
-            <button onclick="increment()">¡Tap!</button>
-            <p>Meta: 45 repeticiones</p>
+            <h3 id="category-name">Selecciona categoría</h3>
+            <h1 id="code-value">---</h1>
+            <div id="progress-container"><div id="progress-bar"></div></div>
+            <button id="tap-btn" onclick="handleTap()" disabled>TAP</button>
+            <p id="counter-text">Repeticiones: 0 / 45</p>
+            <p class="info" id="queue-info">Códigos en lista: 0</p>
         </div>
     </div>
 
     <script>
-        let count = 0;
-        const goal = 45; // Los códigos sagrados suelen repetirse 45 veces
-        
+        let codesQueue = [];
+        let currentCodeIndex = 0;
+        let tapCount = 0;
+        const GOAL = 45;
+
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function selectOption(option) {
-            document.getElementById('title').innerText = option;
-            resetCounter();
+        async function loadCategory(prefix) {
             toggleMenu();
+            try {
+                // Fetch del archivo .resource (Amplify lo sirve como estático)
+                const response = await fetch('./static-resources/codigos.resource');
+                const text = await response.text();
+                
+                // Parsing: Filtramos las líneas que empiecen con el prefijo
+                codesQueue = text.split('\n')
+                    .filter(line => line.toUpperCase().startsWith(prefix.toUpperCase()))
+                    .map(line => line.split('=')[1]?.trim())
+                    .filter(val => val !== undefined);
+
+                if (codesQueue.length > 0) {
+                    currentCodeIndex = 0;
+                    startCode();
+                } else {
+                    alert("No se encontraron códigos para esta categoría.");
+                }
+            } catch (error) {
+                console.error("Error cargando recursos:", error);
+                alert("Error al conectar con el servidor de recursos.");
+            }
         }
 
-        function increment() {
-            if (count < goal) {
-                count++;
+        function startCode() {
+            tapCount = 0;
+            document.getElementById('category-name').innerText = "Activando Código:";
+            document.getElementById('code-value').innerText = codesQueue[currentCodeIndex];
+            document.getElementById('tap-btn').disabled = false;
+            document.getElementById('queue-info').innerText = `Código ${currentCodeIndex + 1} de ${codesQueue.length}`;
+            updateDisplay();
+        }
+
+        function handleTap() {
+            tapCount++;
+            if (tapCount >= GOAL) {
+                nextCode();
+            } else {
                 updateDisplay();
             }
         }
 
-        function resetCounter() {
-            count = 0;
-            updateDisplay();
+        function nextCode() {
+            currentCodeIndex++;
+            if (currentCodeIndex < codesQueue.length) {
+                alert("¡Código completado! Iniciando siguiente...");
+                startCode();
+            } else {
+                document.getElementById('code-value').innerText = "¡FIN!";
+                document.getElementById('tap-btn').disabled = true;
+                alert("Has terminado todos los códigos de esta lista.");
+            }
         }
 
         function updateDisplay() {
-            document.getElementById('counter').innerText = count;
-            const percentage = (count / goal) * 100;
+            document.getElementById('counter-text').innerText = `Repeticiones: ${tapCount} / ${GOAL}`;
+            const percentage = (tapCount / GOAL) * 100;
             document.getElementById('progress-bar').style.width = percentage + '%';
         }
     </script>
