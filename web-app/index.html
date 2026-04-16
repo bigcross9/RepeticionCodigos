@@ -78,141 +78,59 @@
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
 
         // En el script de tu index.html, actualiza la función
-async function loadCategory(prefix, resourcePath) { // <--- Nuevo parámetro resourcePath
+async function loadCategory(prefix, resourcePath) {
     activePrefix = prefix;
     if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
     
-    // Si no se proporciona ruta, usamos la por defecto (para CRAYON y DINERO)
     const finalPath = resourcePath || './static-resources/codigos.resource';
-    console.log("Cargando categoría:", prefix, "desde:", finalPath);
-
+    
     try {
-        const response = await fetch(finalPath); // <--- Usamos la ruta dinámica
-        if (!response.ok) throw new Error("No se pudo encontrar el archivo de recursos");
-        // ... resto de tu lógica de parsing sin cambios ...
-                const text = await response.text();
-                const lines = text.split(/\r?\n/);
+        const response = await fetch(finalPath);
+        const text = await response.text();
+        const lines = text.split(/\r?\n/);
 
-                codesQueue = [];
-                textsMap = {};
-                thanksImage = "";
+        codesQueue = [];
+        textsMap = {};
+        thanksImage = "";
+        let startingInvocacion = ""; // Variable temporal para la invocación
 
-                lines.forEach(line => {
-                    const upperLine = line.toUpperCase();
-                    if (upperLine.includes('.TEXTO=')) {
-                        const parts = line.split('.TEXTO=');
-                        const key = parts[0].split('.').pop().trim();
-                        textsMap[key] = parts[1].trim().replace(/\\n/g, '\n');
-                    } else if (upperLine.includes('.AGRADECIMIENTO=')) {
-                        // Capturamos la imagen si coincide con la categoría actual
-                        if(upperLine.startsWith(prefix.toUpperCase())) {
-                            thanksImage = line.split('=')[1].trim();
-                        }
-                    } else if (upperLine.startsWith(prefix.toUpperCase()) && line.includes('=')) {
-                        codesQueue.push(line.split('=')[1].trim());
-                    }
-                });
-
-                if (codesQueue.length > 0) {
-                    currentCodeIndex = 0;
-                    setupCode();
+        lines.forEach(line => {
+            const upperLine = line.toUpperCase();
+            
+            // 1. Buscar Invocación Inicial
+            if (upperLine.includes('.INVOCACION.TEXTO=')) {
+                startingInvocacion = line.split('=')[1].trim().replace(/\\n/g, '\n');
+            } 
+            // 2. Buscar Textos de Mantras
+            else if (upperLine.includes('.TEXTO=')) {
+                const parts = line.split('.TEXTO=');
+                const key = parts[0].split('.').pop().trim();
+                textsMap[key] = parts[1].trim().replace(/\\n/g, '\n');
+            } 
+            // 3. Buscar Agradecimiento
+            else if (upperLine.includes('.AGRADECIMIENTO=')) {
+                if(upperLine.startsWith(prefix.toUpperCase())) {
+                    thanksImage = line.split('=')[1].trim();
                 }
-            } catch (e) { alert("Error al cargar recursos"); }
-        }
+            } 
+            // 4. Buscar Códigos
+            else if (upperLine.startsWith(prefix.toUpperCase()) && line.includes('=')) {
+                codesQueue.push(line.split('=')[1].trim());
+            }
+        });
 
-        function setupCode() {
-            const currentCode = codesQueue[currentCodeIndex];
-            const textToDisplay = textsMap[currentCode];
-
-            document.getElementById('code-value').innerText = currentCode;
-            document.getElementById('category-name').innerText = "Código Sagrado:";
-            document.getElementById('queue-info').innerText = `Código ${currentCodeIndex + 1} de ${codesQueue.length}`;
-            
-            tapCount = 0;
-            updateDisplay();
-
-            if (textToDisplay) {
-                openModal(textToDisplay, 'text');
+        if (codesQueue.length > 0) {
+            currentCodeIndex = 0;
+            // SI hay invocación, la mostramos antes de configurar el primer código
+            if (startingInvocacion) {
+                openModal(startingInvocacion, 'text');
+                // IMPORTANTE: Preparamos el primer código "detrás" del modal
+                prepareFirstCodeSilent(); 
             } else {
-                startCounting();
-            }
-        }
-
-        function openModal(content, type) {
-            const body = document.getElementById('modal-body');
-            body.innerHTML = '';
-            
-            if (type === 'text') {
-                const div = document.createElement('div');
-                div.className = 'modal-text';
-                div.innerText = content;
-                body.appendChild(div);
-                document.getElementById('modal-close-btn').innerText = "OK - COMENZAR";
-            } else if (type === 'image') {
-                const img = document.createElement('img');
-                img.src = `./static-resources/${content}`;
-                img.className = 'img-full';
-                body.appendChild(img);
-                document.getElementById('modal-close-btn').innerText = "OK - FINALIZAR";
-            }
-            
-            document.getElementById('modal-overlay').style.display = 'flex';
-            document.getElementById('tap-btn').disabled = true;
-        }
-
-        function closeModal() {
-            document.getElementById('modal-overlay').style.display = 'none';
-            // Si estábamos en modo imagen, ya terminamos todo
-            if (document.getElementById('modal-close-btn').innerText.includes("FINALIZAR")) {
-                location.reload(); // Reinicio estoico total
-            } else {
-                startCounting();
-            }
-        }
-
-        function startCounting() {
-            document.getElementById('progress-container').style.display = 'block';
-            document.getElementById('counter-text').style.display = 'block';
-            document.getElementById('tap-btn').disabled = false;
-        }
-
-        function handleTap() {
-            tapCount++;
-            if (tapCount >= GOAL) {
-                nextCode();
-            } else {
-                updateDisplay();
-            }
-        }
-
-        function restartToBeginning() {
-            if (activePrefix) {
-                currentCodeIndex = 0;
                 setupCode();
             }
         }
-
-        function nextCode() {
-    currentCodeIndex++;
-    if (currentCodeIndex < codesQueue.length) {
-        setupCode();
-    } else {
-        if (thanksImage) {
-            // Verificamos si es un archivo de imagen o solo texto
-            const isImage = /\.(jpg|jpeg|png|gif)$/i.test(thanksImage);
-            if (isImage) {
-                openModal(thanksImage, 'image');
-            } else {
-                // Si no tiene extensión de imagen, lo tratamos como texto de cierre
-                openModal(thanksImage.replace(/\\n/g, '\n'), 'text');
-                // Cambiamos el botón para que diga que ya terminó todo
-                document.getElementById('modal-close-btn').innerText = "OK - FINALIZAR";
-            }
-        } else {
-            alert("¡Has terminado todos los códigos!");
-            location.reload();
-        }
-    }
+    } catch (e) { alert("Error al cargar: " + e.message); }
 }
 
         function updateDisplay() {
@@ -220,6 +138,15 @@ async function loadCategory(prefix, resourcePath) { // <--- Nuevo parámetro res
             const percentage = (tapCount / GOAL) * 100;
             document.getElementById('progress-bar').style.width = percentage + '%';
         }
+
+function prepareFirstCodeSilent() {
+    const currentCode = codesQueue[0];
+    document.getElementById('code-value').innerText = currentCode;
+    document.getElementById('category-name').innerText = "Código Activo:";
+    document.getElementById('queue-info').innerText = `Código 1 de ${codesQueue.length}`;
+    tapCount = 0;
+    updateDisplay();
+}
     </script>
 </body>
 </html>
