@@ -6,170 +6,29 @@
     <title>Códigos Sagrados Pro</title>
     <style>
         :root { --primary: #007bff; --dark: #333; --success: #4caf50; --accent: #6f42c1; --danger: #dc3545; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; height: 100vh; display: flex; flex-direction: column; }
+        
         header { background: var(--primary); color: white; padding: 1rem; display: flex; align-items: center; position: fixed; width: 100%; top: 0; z-index: 100; box-sizing: border-box; }
         
-        .sidebar { position: fixed; left: -260px; top: 0; width: 250px; height: 100%; background: var(--dark); color: white; transition: 0.3s; z-index: 200; padding-top: 60px; }
+        .sidebar { position: fixed; left: -260px; top: 0; width: 250px; height: 100%; background: var(--dark); color: white; transition: 0.3s; z-index: 300; padding-top: 60px; }
         .sidebar.active { left: 0; }
         .sidebar a { display: block; padding: 15px 25px; color: white; text-decoration: none; border-bottom: 1px solid #444; cursor: pointer; }
         
-        .main-content { padding: 100px 20px; display: flex; flex-direction: column; align-items: center; }
+        .main-content { padding: 100px 20px; display: flex; flex-direction: column; align-items: center; flex: 1; }
         .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 380px; box-sizing: border-box; }
         
-        /* Estilo para el Texto con soporte de saltos de línea */
-        #text-display { font-size: 1.1rem; color: var(--dark); margin: 20px 0; line-height: 1.5; font-style: italic; display: none; background: #f8f9fa; padding: 15px; border-left: 5px solid var(--accent); border-radius: 5px; white-space: pre-line; text-align: left; }
-        
+        /* Modal System */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 500; padding: 20px; box-sizing: border-box; }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; max-width: 500px; width: 100%; position: relative; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: fadeIn 0.3s ease; }
+        .modal-text { font-size: 1.1rem; line-height: 1.6; color: var(--dark); font-style: italic; white-space: pre-line; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 15px; }
+        .modal-btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
         #progress-container { width: 100%; background: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 15px; display: none; }
         #progress-bar { width: 0%; height: 100%; background: var(--success); transition: width 0.2s; border-radius: 10px; }
         
-        /* Botón Iniciar/Tap con estado deshabilitado */
-        button#tap-btn { padding: 20px; font-size: 1.5rem; cursor: pointer; border: none; border-radius: 12px; background: var(--primary); color: white; width: 100%; touch-action: manipulation; transition: background 0.3s; }
-        button#tap-btn:disabled { background: #ccc; cursor: not-allowed; color: #888; }
+        button#tap-btn { padding: 20px; font-size: 1.5rem; cursor: pointer; border: none; border-radius: 12px; background: var(--primary); color: white; width: 100%; touch-action: manipulation; }
+        button#tap-btn:disabled { background: #ccc; color: #888; }
         
-        /* Botón Reiniciar Flotante */
-        .btn-restart { position: fixed; bottom: 20px; right: 20px; background: var(--danger); color: white; border: none; border-radius: 50px; padding: 12px 20px; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); cursor: pointer; z-index: 100; font-size: 0.9rem; }
-        .btn-restart:active { transform: scale(0.95); opacity: 0.9; }
-
-        .info { font-size: 0.8rem; color: #666; margin-top: 10px; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="menu-btn" onclick="toggleMenu()" style="cursor:pointer; padding:10px; font-size: 1.5rem;">☰</div>
-        <span style="margin-left: 10px;">Códigos Sagrados</span>
-    </header>
-
-    <div class="sidebar" id="sidebar">
-        <a onclick="loadCategory('CODIGO.CRAYON')">Código Sagrado Crayon</a>
-        <a onclick="loadCategory('CODIGO.DESBLOQUEO')">Desbloqueo de Códigos</a>
-        <a onclick="loadCategory('CODIGO.DINERO')">Flujo de Dinero</a>
-    </div>
-
-    <div class="main-content">
-        <div class="card">
-            <h3 id="category-name">Selecciona categoría</h3>
-            <h1 id="code-value">---</h1>
-            
-            <div id="text-display"></div> 
-
-            <div id="progress-container"><div id="progress-bar"></div></div>
-            <button id="tap-btn" onclick="handleTap()" disabled>INICIAR</button>
-            <p id="counter-text" style="display:none;">Repeticiones: 0 / 45</p>
-            <p class="info" id="queue-info">Menú -> Elegir categoría</p>
-        </div>
-    </div>
-
-    <button class="btn-restart" onclick="restartCurrentCode()">Reiniciar Código</button>
-
-    <script>
-        let codesQueue = [];
-        let textsMap = {};
-        let currentCodeIndex = 0;
-        let tapCount = 0;
-        let isViewingText = false;
-        const GOAL = 45;
-
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
-
-        async function loadCategory(prefix) {
-            if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
-            try {
-                const response = await fetch('./static-resources/codigos.resource');
-                const text = await response.text();
-                const lines = text.split('\n');
-
-                codesQueue = [];
-                textsMap = {};
-
-                lines.forEach(line => {
-                    if (line.toUpperCase().includes('.TEXTO=')) {
-                        const parts = line.split('.TEXTO=');
-                        const key = parts[0].split('.').pop();
-                        // Reemplazar la cadena literal \n por un salto de línea real
-                        textsMap[key] = parts[1].trim().replace(/\\n/g, '\n');
-                    } else if (line.toUpperCase().startsWith(prefix.toUpperCase()) && line.includes('=')) {
-                        const val = line.split('=')[1].trim();
-                        codesQueue.push(val);
-                    }
-                });
-
-                if (codesQueue.length > 0) {
-                    currentCodeIndex = 0;
-                    setupCode();
-                }
-            } catch (e) { alert("Error cargando recursos"); }
-        }
-
-        function setupCode() {
-            const currentCode = codesQueue[currentCodeIndex];
-            const textToDisplay = textsMap[currentCode];
-
-            document.getElementById('code-value').innerText = currentCode;
-            document.getElementById('category-name').innerText = "Código Activo:";
-            document.getElementById('queue-info').innerText = `Código ${currentCodeIndex + 1} de ${codesQueue.length}`;
-
-            if (textToDisplay) {
-                isViewingText = true;
-                const displayEl = document.getElementById('text-display');
-                displayEl.innerText = textToDisplay; 
-                displayEl.style.display = 'block';
-                document.getElementById('progress-container').style.display = 'none';
-                document.getElementById('counter-text').style.display = 'none';
-                document.getElementById('tap-btn').innerText = "LEÍDO - EMPEZAR";
-            } else {
-                startCounting();
-            }
-            document.getElementById('tap-btn').disabled = false;
-        }
-
-        function startCounting() {
-            isViewingText = false;
-            tapCount = 0;
-            document.getElementById('text-display').style.display = 'none';
-            document.getElementById('progress-container').style.display = 'block';
-            document.getElementById('counter-text').style.display = 'block';
-            document.getElementById('tap-btn').innerText = "TAP";
-            updateDisplay();
-        }
-
-        function handleTap() {
-            if (isViewingText) {
-                startCounting();
-            } else {
-                tapCount++;
-                if (tapCount >= GOAL) {
-                    nextCode();
-                } else {
-                    updateDisplay();
-                }
-            }
-        }
-
-        function restartCurrentCode() {
-            if (codesQueue.length > 0) {
-                setupCode();
-            }
-        }
-
-        function nextCode() {
-            currentCodeIndex++;
-            if (currentCodeIndex < codesQueue.length) {
-                setupCode();
-            } else {
-                document.getElementById('code-value').innerText = "¡FIN!";
-                document.getElementById('tap-btn').disabled = true;
-                document.getElementById('progress-container').style.display = 'none';
-                document.getElementById('counter-text').style.display = 'none';
-                document.getElementById('queue-info').innerText = "Lista completada";
-            }
-        }
-
-        function updateDisplay() {
-            document.getElementById('counter-text').innerText = `Repeticiones: ${tapCount} / ${GOAL}`;
-            const percentage = (tapCount / GOAL) * 100;
-            document.getElementById('progress-bar').style.width = percentage + '%';
-        }
-    </script>
-</body>
-</html>
+        .btn-restart { position: fixed; bottom: 20px; right: 20px; background: var(--danger); color: white; border: none; border-radius:
