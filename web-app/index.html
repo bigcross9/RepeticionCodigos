@@ -193,18 +193,27 @@ async function loadCategory(prefix, resourcePath) { // <--- Nuevo parámetro res
         }
 
         function nextCode() {
-            currentCodeIndex++;
-            if (currentCodeIndex < codesQueue.length) {
-                setupCode();
+    currentCodeIndex++;
+    if (currentCodeIndex < codesQueue.length) {
+        setupCode();
+    } else {
+        if (thanksImage) {
+            // Verificamos si es un archivo de imagen o solo texto
+            const isImage = /\.(jpg|jpeg|png|gif)$/i.test(thanksImage);
+            if (isImage) {
+                openModal(thanksImage, 'image');
             } else {
-                if (thanksImage) {
-                    openModal(thanksImage, 'image');
-                } else {
-                    alert("¡Has terminado todos los códigos!");
-                    location.reload();
-                }
+                // Si no tiene extensión de imagen, lo tratamos como texto de cierre
+                openModal(thanksImage.replace(/\\n/g, '\n'), 'text');
+                // Cambiamos el botón para que diga que ya terminó todo
+                document.getElementById('modal-close-btn').innerText = "OK - FINALIZAR";
             }
+        } else {
+            alert("¡Has terminado todos los códigos!");
+            location.reload();
         }
+    }
+}
 
         function updateDisplay() {
             document.getElementById('counter-text').innerText = `Repeticiones: ${tapCount} / ${GOAL}`;
