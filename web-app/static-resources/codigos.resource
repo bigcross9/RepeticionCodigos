@@ -18,4 +18,4 @@ CODIGO.CRAYON=133
 CODIGO.CRAYON.133.TEXTO=Acelerar el advenimiento de la riqueza en su vida. codigo sagrado 133
 CODIGO.CRAYON=605
 CODIGO.CRAYON.605.TEXTO=Ángeles del bienestar código sagrado 605
-
+CODIGO.CRAYON.AGRADECIMIENTO=28a08ac6-520d-4749-bb9a-a996f51f3c53.JPG
