@@ -3,7 +3,7 @@
 DESBLOQUEO.INVOCACION.TEXTO=Invocación:\n\nPido a mi Poderosa presencia de Dios que ¡YO SOY! Dios Padre-Madre. Te pido que lleves las riendas de la activación de los códigos sagrados, para que todo sea en perfecta armonía, de acuerdo a la voluntad divina, bajo la gracia y de manera perfecta.\n\n¡Gracias Padre! que me has oído. Y ya me lo has concedido.\n\n¡Gracias Padre! porque todo está cumplido. Aquí y Ahora.\n\nCon el poder de la Cruz Dorada de Oasibeth, de la Madre María, y del Maestro Ascendido Merlín, deshago ahora todo el trabajo que han hecho los asintriones sobre mí, mis seres queridos y mis bienhechores.
 
 ! --- MANTRA 1 ---
-DESBLOQUEO=1991913
+DESBLOQUEO=19 9191 3
 DESBLOQUEO.1991913.TEXTO=Mantra 1:\n\nSello mi aura con el código sagrado: 19 9 19 13, proveniente de la divina luz del planeta Ageón, y quedo libre ahora por orden divina.\n\nRepite 19 9 19 13 (45 veces).\n\nCódigo ha sido activado. Hecho está. Gracias, Gracias, Gracias.
 
 ! --- MANTRA 2 & 3 ---
@@ -12,7 +12,7 @@ DESBLOQUEO=860907
 DESBLOQUEO.860907.TEXTO=Código ha sido activado. Hecho está. Gracias, Gracias, Gracias.\n\nMantra 2 y 3:\n\nLlama violeta de los mil soles: código sagrado 86 09 07, pido que transmutes cualquier bloqueo en mi vida.\n\nRepite 86 09 07 (45 veces).
 
 ! --- MANTRA 4 ---
-DESBLOQUEO=443355
+DESBLOQUEO=44 33 55
 DESBLOQUEO.443355.TEXTO=Mantra 4:\n\nEspíritu Santo: código sagrado 44 33 55, pido la liberación de muchos lazos kármicos y de opresores que me han hecho la vida difícil durante varias encarnaciones incluyendo la actual.\n\nRepite 44 33 55 (45 veces).\n\nCódigo ha sido activado. Hecho está. Gracias, Gracias, Gracias.
 
 ! --- MANTRA 5 AL 12 ---
@@ -62,7 +62,7 @@ DESBLOQUEO.919.TEXTO=Mantra 18:\n\nActivo el código sagrado 9 19 para sanar rec
 DESBLOQUEO=59
 DESBLOQUEO.59.TEXTO=Mantra 19:\n\nActivo el código sagrado 59 para sanar recuerdos negativos desde los 7 años a los 18 años de edad.\n\nRepite 59 (45 veces).\n\nCódigo ha sido activado. Hecho está. Gracias, Gracias, Gracias.
 
-DESBLOQUEO=45600
+DESBLOQUEO=45 600
 DESBLOQUEO.45600.TEXTO=Mantra 20:\n\nActivo el código sagrado 45 600 para borrar memorias negativas del subconsciente.\n\nRepite 45 600 (45 veces).\n\nCódigo ha sido activado. Hecho está. Gracias, Gracias, Gracias.
 
 DESBLOQUEO=29
@@ -90,11 +90,11 @@ DESBLOQUEO.237.TEXTO=Mantra 27:\n\nActivo el código sagrado 2 37 para quitar to
 DESBLOQUEO=563
 DESBLOQUEO.563.TEXTO=Mantra 28:\n\nActivo el código sagrado 5 6 3 para desbloquear mi voz interior.\n\nRepite 5 6 3 (45 veces).\n\nCódigo ha sido activado. Hecho está. Gracias, Gracias, Gracias.
 
-DESBLOQUEO=26700
+DESBLOQUEO=26 700
 DESBLOQUEO.26700.TEXTO=Mantra 29:\n\nActivo el código sagrado 26 700 para limpiar, purificar y transmutar, cualquier situación en el aura.\n\nRepite 26 700 (45 veces).\n\nCódigo ha sido activado. Hecho está. Gracias, Gracias, Gracias.
 
 ! --- MANTRA 30 AL 37 ---
-DESBLOQUEO=62413
+DESBLOQUEO=62 413
 DESBLOQUEO.62413.TEXTO=Mantra 30:\n\nActivo el código sagrado 62 4 13 para multiplicar las señales y entenderlas.\n\nRepite 62 4 13 (45 veces).\n\nCódigo ha sido activado. Hecho está. Gracias, Gracias, Gracias.
 
 DESBLOQUEO=7
