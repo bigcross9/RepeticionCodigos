@@ -22,163 +22,42 @@
             align-items: center;
             height: 100vh;
             color: var(--text);
+            overflow: hidden;
         }
 
         /* Sidebar y Menú */
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 300;
-            top: 0;
-            left: 0;
-            background-color: var(--primary);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-
-        .sidebar a {
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #bdc3c7;
-            display: block;
-            transition: 0.3s;
-        }
-
+        .sidebar { height: 100%; width: 0; position: fixed; z-index: 300; top: 0; left: 0; background-color: var(--primary); overflow-x: hidden; transition: 0.5s; padding-top: 60px; }
+        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 18px; color: #bdc3c7; display: block; transition: 0.3s; }
         .sidebar a:hover { color: var(--white); }
-
-        .menu-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 30px;
-            cursor: pointer;
-            z-index: 301;
-        }
+        .menu-btn { position: absolute; top: 20px; left: 20px; font-size: 30px; cursor: pointer; z-index: 301; }
 
         /* App Container */
-        .app-container {
-            margin-top: 80px;
-            width: 90%;
-            max-width: 400px;
-            background: var(--white);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+        .app-container { margin-top: 80px; width: 90%; max-width: 400px; background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        h2 { margin: 10px 0; color: var(--primary); min-height: 1.2em; }
 
-        h2 { margin: 10px 0; color: var(--primary); }
-
-        /* Queue Info y Timer */
         #queue-info { font-size: 0.9em; color: #7f8c8d; margin-bottom: 5px; }
-        
-        #timer-display {
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 1.1em;
-            margin-bottom: 15px;
-        }
+        #timer-display { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: var(--primary); font-size: 1.1em; margin-bottom: 10px; }
 
         /* Círculo de Progreso Macro */
-        .progress-circle-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
+        .progress-circle-container { display: flex; justify-content: center; margin: 10px 0; }
         .progress-ring { transform: rotate(-90deg); }
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.35s;
-            transform-origin: 50% 50%;
-            stroke: var(--primary);
-        }
+        .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform-origin: 50% 50%; stroke: var(--primary); }
 
-        /* Barra de Taps (45 repeticiones) */
-        .progress-container {
-            width: 100%;
-            background: #eee;
-            height: 15px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
+        /* Barra de Taps */
+        .progress-container { width: 100%; background: #eee; height: 12px; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #3498db, #2ecc71); transition: width 0.2s; }
 
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #3498db, #2ecc71);
-            transition: width 0.2s;
-        }
-
-        #tap-count { font-size: 4em; font-weight: bold; margin: 20px 0; }
-
-        .tap-btn {
-            width: 100%;
-            padding: 20px;
-            font-size: 1.5em;
-            border: none;
-            border-radius: 10px;
-            background: var(--primary);
-            color: white;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-
+        #tap-count { font-size: 4em; font-weight: bold; margin: 10px 0; color: var(--primary); }
+        .tap-btn { width: 100%; padding: 20px; font-size: 1.5em; border: none; border-radius: 10px; background: var(--primary); color: white; cursor: pointer; touch-action: manipulation; }
         .tap-btn:disabled { background: #bdc3c7; cursor: not-allowed; }
 
-        /* Botón Reiniciar */
-        .restart-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 0.7em;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            font-weight: bold;
-        }
+        .restart-btn { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 0.7em; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-weight: bold; z-index: 200; }
 
         /* Modales */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 500;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            width: 85%;
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            max-height: 80vh;
-            overflow-y: auto;
-            white-space: pre-line;
-        }
-
-        .modal-content img { max-width: 100%; border-radius: 10px; }
-
-        .modal-btn {
-            margin-top: 20px;
-            padding: 10px 30px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 500; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 85%; padding: 25px; border-radius: 15px; text-align: center; max-height: 80vh; overflow-y: auto; white-space: pre-line; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-content img { max-width: 100%; border-radius: 10px; margin-top: 10px; }
+        .modal-btn { margin-top: 20px; padding: 12px 30px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; width: 100%; }
     </style>
 </head>
 <body>
@@ -187,20 +66,19 @@
         <a href="javascript:void(0)" onclick="closeNav()">×</a>
         <a href="#" onclick="loadCategory('AGESTA', './static-resources/codigos.resource')">Código Sagrado Agesta</a>
         <a href="#" onclick="loadCategory('DESBLOQUEO', './static-resources/desbloqueo-codigos.resource')">Desbloqueo de Códigos</a>
-        </div>
+    </div>
 
     <div class="menu-btn" onclick="openNav()">☰</div>
 
     <div class="app-container">
         <h2 id="current-title">Seleccione un código</h2>
-        <div id="queue-info">Código 0 de 0</div>
-        
+        <div id="queue-info">Listo para empezar</div>
         <div id="timer-display">00:00</div>
 
         <div class="progress-circle-container">
-            <svg class="progress-ring" width="80" height="80">
-                <circle stroke="#eee" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
-                <circle id="progress-circle" class="progress-ring__circle" stroke-width="6" stroke-dasharray="213.6" stroke-dashoffset="213.6" fill="transparent" r="34" cx="40" cy="40"/>
+            <svg class="progress-ring" width="70" height="70">
+                <circle stroke="#eee" stroke-width="6" fill="transparent" r="30" cx="35" cy="35"/>
+                <circle id="progress-circle" class="progress-ring__circle" stroke-width="6" stroke-dasharray="188.5" stroke-dashoffset="188.5" fill="transparent" r="30" cx="35" cy="35"/>
             </svg>
         </div>
 
@@ -217,7 +95,7 @@
     <div id="modal-overlay" class="modal-overlay">
         <div class="modal-content">
             <div id="modal-body"></div>
-            <button class="modal-btn" onclick="closeModal()">OK / EMPEZAR</button>
+            <button class="modal-btn" onclick="closeModal()">ACEPTAR</button>
         </div>
     </div>
 
@@ -227,15 +105,13 @@
         let tapCount = 0;
         let thanksContent = null;
         let invocationText = null;
-        
-        // Variables de Tiempo
         let startTime = null;
         let timerInterval = null;
+        let isFinalState = false;
 
         const circle = document.getElementById('progress-circle');
         const radius = circle.r.baseVal.value;
         const circumference = radius * 2 * Math.PI;
-        circle.style.strokeDasharray = `${circumference} ${circumference}`;
 
         function openNav() { document.getElementById("mySidebar").style.width = "250px"; }
         function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
@@ -244,45 +120,51 @@
             closeNav();
             try {
                 const response = await fetch(filePath);
-                if (!response.ok) throw new Error("No se encontró el archivo");
+                if (!response.ok) throw new Error("Error: No se pudo cargar el recurso");
                 const text = await response.text();
                 
-                // Reiniciar estados
+                // Reinicio total de variables
                 codesQueue = [];
                 invocationText = null;
                 thanksContent = null;
+                currentIndex = 0;
+                isFinalState = false;
                 resetTimer();
 
                 const lines = text.split('\n');
                 const textMap = {};
 
                 lines.forEach(line => {
-                    if (line.includes(`${prefix}.INVOCACION.TEXTO=`)) {
-                        invocationText = line.split('=')[1].replace(/\\n/g, '\n');
-                    } else if (line.includes(`${prefix}.AGRADECIMIENTO=`)) {
-                        thanksContent = line.split('=')[1];
-                    } else if (line.includes(`${prefix}.AGESTA.`) && line.includes('.TEXTO=')) {
-                        const parts = line.split('=');
-                        const num = parts[0].split('.')[2];
+                    const cleanLine = line.trim();
+                    if (cleanLine.includes(`${prefix}.INVOCACION.TEXTO=`)) {
+                        invocationText = cleanLine.split('=')[1].replace(/\\n/g, '\n');
+                    } else if (cleanLine.includes(`${prefix}.AGRADECIMIENTO=`)) {
+                        thanksContent = cleanLine.split('=')[1];
+                    } else if (cleanLine.includes(`${prefix}.AGESTA.`) && cleanLine.includes('.TEXTO=')) {
+                        const parts = cleanLine.split('=');
+                        const keyParts = parts[0].split('.');
+                        const num = keyParts[keyParts.length - 2]; 
                         textMap[num] = parts[1].replace(/\\n/g, '\n');
-                    } else if (line.includes(`${prefix}.AGESTA=`)) {
-                        codesQueue.push(line.split('=')[1].trim());
+                    } else if (cleanLine.includes(`${prefix}.AGESTA=`) || cleanLine.includes(`${prefix}.AGESTA =`)) {
+                        codesQueue.push(cleanLine.split('=')[1].trim());
                     }
                 });
+
+                if (codesQueue.length === 0) throw new Error("No se encontraron códigos en el archivo.");
 
                 codesQueue = codesQueue.map(num => ({
                     number: num,
                     text: textMap[num] || null
                 }));
 
-                currentIndex = 0;
                 if (invocationText) {
                     showModal(invocationText);
                 } else {
                     setupCode();
                 }
             } catch (e) {
-                alert("Error cargando códigos: " + e.message);
+                alert(e.message);
+                console.error(e);
             }
         }
 
@@ -292,14 +174,16 @@
                 return;
             }
             tapCount = 0;
-            updateUI();
-            const current = codesQueue[currentIndex];
-            if (current.text) showModal(current.text);
             document.getElementById('tap-btn').disabled = false;
+            updateUI();
+            
+            const current = codesQueue[currentIndex];
+            if (current && current.text) {
+                showModal(current.text);
+            }
         }
 
         function handleTap() {
-            // Iniciar tiempo en el primer tap
             if (!startTime) {
                 startTime = Date.now();
                 timerInterval = setInterval(updateTimer, 1000);
@@ -309,40 +193,35 @@
                 tapCount++;
                 if (window.navigator.vibrate) window.navigator.vibrate(30);
                 updateUI();
+                
                 if (tapCount === 45) {
-                    setTimeout(nextCode, 500);
+                    document.getElementById('tap-btn').disabled = true;
+                    setTimeout(() => {
+                        currentIndex++;
+                        setupCode();
+                    }, 600);
                 }
             }
         }
 
-        function nextCode() {
-            currentIndex++;
-            if (currentIndex < codesQueue.length) {
-                setupCode();
-            } else {
-                finishSession();
-            }
-        }
-
         function updateUI() {
+            const currentCode = codesQueue[currentIndex];
             document.getElementById('tap-count').innerText = tapCount;
             document.getElementById('bar').style.width = (tapCount / 45 * 100) + "%";
             
             const total = codesQueue.length;
             const displayIdx = total > 0 ? currentIndex + 1 : 0;
             document.getElementById('queue-info').innerText = `Código ${displayIdx} de ${total}`;
-            document.getElementById('current-title').innerText = codesQueue[currentIndex]?.number || "Agesta";
+            document.getElementById('current-title').innerText = currentCode ? currentCode.number : "Agesta";
 
-            // Actualizar círculo de progreso macro
+            // Progreso Macro (Círculo)
             const progressPercent = total > 0 ? (currentIndex / total) : 0;
             const offset = circumference - (progressPercent * circumference);
             circle.style.strokeDashoffset = offset;
         }
 
-        // Lógica del Temporizador
         function updateTimer() {
-            const now = Date.now();
-            const diff = Math.floor((now - startTime) / 1000);
+            const diff = Math.floor((Date.now() - startTime) / 1000);
             const mins = Math.floor(diff / 60).toString().padStart(2, '0');
             const secs = (diff % 60).toString().padStart(2, '0');
             document.getElementById('timer-display').innerText = `${mins}:${secs}`;
@@ -361,34 +240,32 @@
         }
 
         function finishSession() {
-            clearInterval(timerInterval);
+            resetTimer();
+            isFinalState = true;
+            // Llenar el círculo al 100% al finalizar
+            circle.style.strokeDashoffset = 0;
+
             if (thanksContent) {
                 if (thanksContent.toLowerCase().endsWith('.jpg') || thanksContent.toLowerCase().endsWith('.png')) {
-                    showModal(`<img src="./static-resources/${thanksContent}">`, true);
+                    showModal(`<img src="./static-resources/${thanksContent}">`);
                 } else {
-                    showModal(thanksContent.replace(/\\n/g, '\n'), true);
+                    showModal(thanksContent.replace(/\\n/g, '\n'));
                 }
             } else {
-                alert("Sesión finalizada. ¡Gracias!");
-                location.reload();
+                showModal("Sesión Finalizada. ¡Gracias!");
             }
         }
 
-        function showModal(content, isFinal = false) {
-            const body = document.getElementById('modal-body');
-            body.innerHTML = content;
+        function showModal(content) {
+            document.getElementById('modal-body').innerHTML = content;
             document.getElementById('modal-overlay').style.display = 'flex';
-            if (isFinal) {
-                window.isFinalState = true;
-            }
         }
 
         function closeModal() {
             document.getElementById('modal-overlay').style.display = 'none';
-            if (window.isFinalState) {
+            if (isFinalState) {
                 location.reload();
             } else if (codesQueue.length > 0 && tapCount === 0) {
-                // Si cerramos el modal de inicio o de un código nuevo
                 updateUI();
             }
         }
