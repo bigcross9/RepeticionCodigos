@@ -1,4 +1,21 @@
+CODIGO.CRAYON=860907
+CODIGO.CRAYON.860907.TEXTO=Declaración: Llama violeta plateada de los mil soles, transmuta todo karma, creencia y emoción heredada o adquirida que no me esté permitiendo tener una relación con el dienro. código sagrado 860907
 CODIGO.CRAYON=773
+CODIGO.CRAYON=773.TEXTO=Decreto: Dios multiplica mi bien en exceso. \n espiritu de ruina y miseria (liberarse). código sagrado 773
 CODIGO.CRAYON=61316
+CODIGO.CRAYON.61316.TEXTO=Disolver y eliminar de raiz implantes que me impiden la conexion con el dinero. codigos sagrados 61316, 541280 y 73016.
 CODIGO.CRAYON=541280
-CODIGO.CARYON=73016
+CODIGO.CRAYON=73016
+CODIGO.CRAYON=75139
+CODIGO.CRAYON.75139.TEXTO=Despejar caminos. Este codigo es un numero maestro por medio del cual aplastarán la cabeza de la serpiente y sus caminos se despejarán. codigo sagrado 75139
+CODIGO.CRAYON=790
+CODIGO.CRAYON.TEXTO=Prosperidad
+CODIGO.CRAYON=194
+CODIGO.CRAYON.TEXTO=Abundancia
+CODIGO.CRAYON=904
+CODIGO.CRAYON.904.TEXTO=Obtener fuentes adicionales de ingresos
+CODIGO.CRAYON=133
+CODIGO.CRAYON.133.TEXTO=Acelerar el advenimiento de la riqueza en su vida. codigo sagrado 133
+CODIGO.CRAYON=605
+CODIGO.CRAYON.605.TEXTO=Ángeles del bienestar código sagrado 605
+
