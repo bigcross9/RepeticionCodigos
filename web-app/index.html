@@ -41,8 +41,8 @@
     </header>
 
     <nav class="sidebar" id="sidebar">
-        <a onclick="loadCategory('CODIGO.AGESTA')">Códigos Sagrados Agesta - Flujo de dinero</a>
-        <a onclick="loadCategory('CODIGO.DESBLOQUEO')">Desbloqueo de Códigos</a>
+        <a onclick="loadCategory('CODIGO.AGESTA', './static-resources/codigos.resource')">Código Sagrado Agesta</a>
+        <a onclick="loadCategory('DESBLOQUEO', './static-resources/desbloqueo-codigos.resource')">Desbloqueo de Códigos</a>
         <a onclick="loadCategory('CODIGO.DINERO')">Flujo de Dinero</a>
     </nav>
 
@@ -77,11 +77,19 @@
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
 
-        async function loadCategory(prefix) {
-            activePrefix = prefix;
-            toggleMenu();
-            try {
-                const response = await fetch('./static-resources/codigos.resource');
+        // En el script de tu index.html, actualiza la función
+async function loadCategory(prefix, resourcePath) { // <--- Nuevo parámetro resourcePath
+    activePrefix = prefix;
+    if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
+    
+    // Si no se proporciona ruta, usamos la por defecto (para CRAYON y DINERO)
+    const finalPath = resourcePath || './static-resources/codigos.resource';
+    console.log("Cargando categoría:", prefix, "desde:", finalPath);
+
+    try {
+        const response = await fetch(finalPath); // <--- Usamos la ruta dinámica
+        if (!response.ok) throw new Error("No se pudo encontrar el archivo de recursos");
+        // ... resto de tu lógica de parsing sin cambios ...
                 const text = await response.text();
                 const lines = text.split(/\r?\n/);
 
