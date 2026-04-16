@@ -22,14 +22,16 @@
         .img-full { width: 100%; height: auto; border-radius: 10px; margin-bottom: 15px; object-fit: contain; }
 
         .main-content { padding: 100px 20px; display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 380px; position: relative; }
+        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 380px; }
         
-        /* Nuevos Elementos: Timer y Círculo Macro */
-        .macro-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px; }
-        #session-timer { font-family: monospace; font-weight: bold; font-size: 1.2rem; color: var(--dark); }
-        
+        /* Estilos del Temporizador */
+        #session-timer { font-family: monospace; font-weight: bold; font-size: 1.3rem; color: var(--primary); margin-bottom: 10px; }
+
+        /* Estilos del Círculo de Progreso Macro */
+        .macro-progress-container { position: relative; width: 70px; height: 70px; margin: 15px auto; }
         .progress-ring { transform: rotate(-90deg); }
         .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform-origin: 50% 50%; stroke: var(--accent); }
+        #macro-percentage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 0.9rem; color: var(--dark); }
 
         #progress-container { width: 100%; background: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 15px; display: none; }
         #progress-bar { width: 0%; height: 100%; background: var(--success); transition: width 0.2s; border-radius: 10px; }
@@ -65,21 +67,22 @@
 
     <div class="main-content">
         <div class="card">
-            <h3 id="category-name">Selecciona categoría</h3>
+            <div id="session-timer">00:00</div>
             
-            <div class="macro-container">
-                <svg class="progress-ring" width="60" height="60">
-                    <circle stroke="#e0e0e0" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
-                    <circle id="macro-circle" class="progress-ring__circle" stroke-width="4" stroke-dasharray="163.36" stroke-dashoffset="163.36" fill="transparent" r="26" cx="30" cy="30"/>
-                </svg>
-                <div id="session-timer">00:00</div>
-            </div>
-
+            <h3 id="category-name">Selecciona categoría</h3>
             <h1 id="code-value">---</h1>
             <div id="progress-container"><div id="progress-bar"></div></div>
             <button id="tap-btn" onclick="handleTap()" disabled>TAP</button>
             <p id="counter-text" style="display:none;">Repeticiones: 0 / 45</p>
             <p id="queue-info" class="info">Menú -> Elegir categoría</p>
+
+            <div class="macro-progress-container">
+                <svg class="progress-ring" width="70" height="70">
+                    <circle stroke="#e0e0e0" stroke-width="5" fill="transparent" r="30" cx="35" cy="35"/>
+                    <circle id="macro-circle" class="progress-ring__circle" stroke-width="5" stroke-dasharray="188.5" stroke-dashoffset="188.5" fill="transparent" r="30" cx="35" cy="35" stroke-linecap="round"/>
+                </svg>
+                <div id="macro-percentage">0%</div>
+            </div>
         </div>
     </div>
 
@@ -100,7 +103,7 @@
         let startTime = null;
         let timerInterval = null;
         const macroCircle = document.getElementById('macro-circle');
-        const circumference = 26 * 2 * Math.PI;
+        const circumference = 30 * 2 * Math.PI;
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
 
@@ -108,7 +111,7 @@
             activePrefix = prefix;
             activePath = resourcePath;
             toggleMenu();
-            resetSessionState();
+            resetSystem(); // Limpia todo al cambiar de categoría
             
             try {
                 const response = await fetch(resourcePath);
@@ -149,11 +152,12 @@
             } catch (e) { alert("Error: " + e.message); }
         }
 
-        function resetSessionState() {
+        function resetSystem() {
             clearInterval(timerInterval);
             startTime = null;
             document.getElementById('session-timer').innerText = "00:00";
             macroCircle.style.strokeDashoffset = circumference;
+            document.getElementById('macro-percentage').innerText = "0%";
             codesQueue = [];
             textsMap = {};
             thanksContent = "";
@@ -171,6 +175,10 @@
         }
 
         function setupCode() {
+            if (currentCodeIndex >= codesQueue.length) {
+                finishSession();
+                return;
+            }
             const currentCode = codesQueue[currentCodeIndex];
             const textToDisplay = textsMap[currentCode];
 
@@ -191,7 +199,7 @@
         }
 
         function handleTap() {
-            // Iniciar temporizador al primer tap
+            // Iniciar tiempo al primer tap
             if (!startTime) {
                 startTime = Date.now();
                 timerInterval = setInterval(updateTimer, 1000);
@@ -206,8 +214,7 @@
         }
 
         function updateTimer() {
-            const now = Date.now();
-            const diff = Math.floor((now - startTime) / 1000);
+            const diff = Math.floor((Date.now() - startTime) / 1000);
             const m = Math.floor(diff / 60).toString().padStart(2, '0');
             const s = (diff % 60).toString().padStart(2, '0');
             document.getElementById('session-timer').innerText = `${m}:${s}`;
@@ -216,18 +223,12 @@
         function updateMacroProgress() {
             const total = codesQueue.length;
             if (total === 0) return;
-            // El progreso macro depende de cuántos códigos de la lista hemos completado
             const progress = currentCodeIndex / total;
             const offset = circumference - (progress * circumference);
             macroCircle.style.strokeDashoffset = offset;
-        }
-
-        function restartToBeginning() {
-            if (activePrefix) {
-                resetSessionState();
-                // Re-ejecutamos la carga para limpiar todo e iniciar de cero
-                loadCategory(activePrefix, activePath);
-            }
+            
+            const percentage = Math.floor(progress * 100);
+            document.getElementById('macro-percentage').innerText = `${percentage}%`;
         }
 
         function nextCode() {
@@ -235,18 +236,22 @@
             if (currentCodeIndex < codesQueue.length) {
                 setupCode();
             } else {
-                // Al finalizar, el círculo se llena al 100%
-                macroCircle.style.strokeDashoffset = 0;
-                clearInterval(timerInterval);
-                
-                if (thanksContent) {
-                    const isImage = /\.(jpg|jpeg|png|gif)$/i.test(thanksContent);
-                    openModal(thanksContent.replace(/\\n/g, '\n'), isImage ? 'image' : 'text');
-                    document.getElementById('modal-close-btn').innerText = "OK - FINALIZAR";
-                } else {
-                    alert("¡Fin de la lista!");
-                    location.reload();
-                }
+                finishSession();
+            }
+        }
+
+        function finishSession() {
+            clearInterval(timerInterval);
+            macroCircle.style.strokeDashoffset = 0;
+            document.getElementById('macro-percentage').innerText = "100%";
+
+            if (thanksContent) {
+                const isImage = /\.(jpg|jpeg|png|gif)$/i.test(thanksContent);
+                openModal(thanksContent.replace(/\\n/g, '\n'), isImage ? 'image' : 'text');
+                document.getElementById('modal-close-btn').innerText = "OK - FINALIZAR";
+            } else {
+                alert("¡Sesión finalizada!");
+                location.reload();
             }
         }
 
@@ -256,7 +261,12 @@
             document.getElementById('progress-bar').style.width = percentage + '%';
         }
 
-        // --- Funciones de UI del código base ---
+        function restartToBeginning() {
+            if (activePrefix) {
+                loadCategory(activePrefix, activePath);
+            }
+        }
+
         function openModal(content, type) {
             const body = document.getElementById('modal-body');
             body.innerHTML = '';
