@@ -9,7 +9,7 @@ DESBLOQUEO.1991913.TEXTO=Mantra 1:\n\nSello mi aura con el código sagrado: 19 9
 ! --- MANTRA 2 & 3 ---
 ! Nota: En la imagen el punto 2 y 3 usan el mismo código y texto de cierre, se han unificado para el conteo.
 DESBLOQUEO=860907
-DESBLOQUEO.860907.TEXTO=Mantra 2 y 3:\n\nLlama violeta de los mil soles: código sagrado 86 09 07, pido que transmutes cualquier bloqueo en mi vida.\n\nRepite 86 09 07 (45 veces).\n\nCódigo ha sido activado. Hecho está. Gracias, Gracias, Gracias.
+DESBLOQUEO.860907.TEXTO=Código ha sido activado. Hecho está. Gracias, Gracias, Gracias.Mantra 2 y 3:\n\nLlama violeta de los mil soles: código sagrado 86 09 07, pido que transmutes cualquier bloqueo en mi vida.\n\nRepite 86 09 07 (45 veces).
 
 ! --- MANTRA 4 ---
 DESBLOQUEO=443355
