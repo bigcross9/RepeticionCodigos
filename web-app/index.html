@@ -7,6 +7,7 @@
     <style>
         :root { --primary: #007bff; --dark: #333; --success: #4caf50; --accent: #6f42c1; --danger: #dc3545; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
         header { background: var(--primary); color: white; padding: 1rem; display: flex; align-items: center; position: fixed; width: 100%; top: 0; z-index: 100; box-sizing: border-box; }
         
         .sidebar { position: fixed; left: -260px; top: 0; width: 250px; height: 100%; background: var(--dark); color: white; transition: 0.3s; z-index: 300; padding-top: 60px; }
@@ -15,10 +16,9 @@
         
         /* Modal System */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 500; padding: 20px; box-sizing: border-box; }
-        .modal-content { background: white; padding: 25px; border-radius: 15px; max-width: 500px; width: 100%; text-align: left; max-height: 90vh; overflow-y: auto; }
-        .modal-text { font-size: 1.1rem; line-height: 1.6; white-space: pre-line; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 15px; }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; max-width: 500px; width: 100%; text-align: left; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-text { font-size: 1.1rem; line-height: 1.6; white-space: pre-line; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 15px; color: var(--dark); }
         
-        /* Modal Imagen Agradecimiento */
         .img-full { width: 100%; height: auto; border-radius: 10px; margin-bottom: 15px; object-fit: contain; }
 
         .main-content { padding: 100px 20px; display: flex; flex-direction: column; align-items: center; flex: 1; }
@@ -27,10 +27,13 @@
         #progress-container { width: 100%; background: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 15px; display: none; }
         #progress-bar { width: 0%; height: 100%; background: var(--success); transition: width 0.2s; border-radius: 10px; }
         
-        button { padding: 20px; font-size: 1.5rem; cursor: pointer; border: none; border-radius: 12px; background: var(--primary); color: white; width: 100%; }
-        button:disabled { background: #ccc; color: #888; }
+        button#tap-btn { padding: 20px; font-size: 1.5rem; cursor: pointer; border: none; border-radius: 12px; background: var(--primary); color: white; width: 100%; touch-action: manipulation; transition: 0.2s; }
+        button#tap-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; }
+        button#tap-btn:active { transform: scale(0.98); }
         
-        .btn-restart { position: fixed; bottom: 20px; right: 20px; background: var(--danger); color: white; border: none; border-radius: 50px; padding: 12px 20px; font-weight: bold; z-index: 100; }
+        .btn-restart { position: fixed; bottom: 20px; right: 20px; background: var(--danger); color: white; border: none; border-radius: 50px; padding: 12px 20px; font-weight: bold; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; }
+
+        .info { font-size: 0.8rem; color: #666; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -41,15 +44,15 @@
     </header>
 
     <nav class="sidebar" id="sidebar">
-        <a onclick="loadCategory('CODIGO.AGESTA', './static-resources/codigos.resource')">Código Sagrado Agesta</a>
+        <a onclick="loadCategory('CODIGO.CRAYON', './static-resources/codigos.resource')">Código Sagrado Crayon</a>
         <a onclick="loadCategory('DESBLOQUEO', './static-resources/desbloqueo-codigos.resource')">Desbloqueo de Códigos</a>
-        <a onclick="loadCategory('CODIGO.DINERO')">Flujo de Dinero</a>
+        <a onclick="loadCategory('CODIGO.DINERO', './static-resources/codigos.resource')">Flujo de Dinero</a>
     </nav>
 
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal-content" id="modal-container">
             <div id="modal-body"></div>
-            <button onclick="closeModal()" id="modal-close-btn" style="background: var(--primary); color:white; border:none; padding:15px; border-radius:10px; width:100%; font-weight:bold; margin-top: 10px;">OK</button>
+            <button onclick="closeModal()" id="modal-close-btn" style="background: var(--primary); color:white; border:none; padding:15px; border-radius:10px; width:100%; font-weight:bold; margin-top: 10px; cursor: pointer;">OK</button>
         </div>
     </div>
 
@@ -60,7 +63,7 @@
             <div id="progress-container"><div id="progress-bar"></div></div>
             <button id="tap-btn" onclick="handleTap()" disabled>TAP</button>
             <p id="counter-text" style="display:none;">Repeticiones: 0 / 45</p>
-            <p id="queue-info" style="font-size: 0.8rem; color: #666; margin-top: 10px;">Menú -> Elegir categoría</p>
+            <p id="queue-info" class="info">Menú -> Elegir categoría</p>
         </div>
     </div>
 
@@ -69,84 +72,168 @@
     <script>
         let codesQueue = [];
         let textsMap = {};
-        let thanksImage = "";
+        let thanksContent = "";
         let currentCodeIndex = 0;
         let tapCount = 0;
-        let activePrefix = ""; 
+        let activePrefix = "";
+        let activePath = "";
+        let pendingInvocacion = "";
         const GOAL = 45;
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
 
-        // En el script de tu index.html, actualiza la función
-async function loadCategory(prefix, resourcePath) {
-    activePrefix = prefix;
-    if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
-    
-    const finalPath = resourcePath || './static-resources/codigos.resource';
-    
-    try {
-        const response = await fetch(finalPath);
-        const text = await response.text();
-        const lines = text.split(/\r?\n/);
-
-        codesQueue = [];
-        textsMap = {};
-        thanksImage = "";
-        let startingInvocacion = ""; // Variable temporal para la invocación
-
-        lines.forEach(line => {
-            const upperLine = line.toUpperCase();
+        async function loadCategory(prefix, resourcePath) {
+            activePrefix = prefix;
+            activePath = resourcePath;
+            toggleMenu();
             
-            // 1. Buscar Invocación Inicial
-            if (upperLine.includes('.INVOCACION.TEXTO=')) {
-                startingInvocacion = line.split('=')[1].trim().replace(/\\n/g, '\n');
-            } 
-            // 2. Buscar Textos de Mantras
-            else if (upperLine.includes('.TEXTO=')) {
-                const parts = line.split('.TEXTO=');
-                const key = parts[0].split('.').pop().trim();
-                textsMap[key] = parts[1].trim().replace(/\\n/g, '\n');
-            } 
-            // 3. Buscar Agradecimiento
-            else if (upperLine.includes('.AGRADECIMIENTO=')) {
-                if(upperLine.startsWith(prefix.toUpperCase())) {
-                    thanksImage = line.split('=')[1].trim();
-                }
-            } 
-            // 4. Buscar Códigos
-            else if (upperLine.startsWith(prefix.toUpperCase()) && line.includes('=')) {
-                codesQueue.push(line.split('=')[1].trim());
-            }
-        });
+            try {
+                const response = await fetch(resourcePath);
+                if (!response.ok) throw new Error("No se pudo cargar el archivo");
+                const text = await response.text();
+                const lines = text.split(/\r?\n/);
 
-        if (codesQueue.length > 0) {
-            currentCodeIndex = 0;
-            // SI hay invocación, la mostramos antes de configurar el primer código
-            if (startingInvocacion) {
-                openModal(startingInvocacion, 'text');
-                // IMPORTANTE: Preparamos el primer código "detrás" del modal
-                prepareFirstCodeSilent(); 
+                codesQueue = [];
+                textsMap = {};
+                thanksContent = "";
+                pendingInvocacion = "";
+
+                lines.forEach(line => {
+                    const upperLine = line.toUpperCase();
+                    
+                    if (upperLine.includes('.INVOCACION.TEXTO=')) {
+                        pendingInvocacion = line.split('=')[1].trim().replace(/\\n/g, '\n');
+                    } 
+                    else if (upperLine.includes('.TEXTO=')) {
+                        const parts = line.split('.TEXTO=');
+                        const key = parts[0].split('.').pop().trim();
+                        textsMap[key] = parts[1].trim().replace(/\\n/g, '\n');
+                    } 
+                    else if (upperLine.includes('.AGRADECIMIENTO=')) {
+                        if(upperLine.startsWith(prefix.toUpperCase())) {
+                            thanksContent = line.split('=')[1].trim();
+                        }
+                    } 
+                    else if (upperLine.startsWith(prefix.toUpperCase()) && line.includes('=')) {
+                        codesQueue.push(line.split('=')[1].trim());
+                    }
+                });
+
+                if (codesQueue.length > 0) {
+                    currentCodeIndex = 0;
+                    if (pendingInvocacion) {
+                        openModal(pendingInvocacion, 'text');
+                        document.getElementById('modal-close-btn').innerText = "OK - COMENZAR";
+                        prepareFirstCodeSilent();
+                    } else {
+                        setupCode();
+                    }
+                }
+            } catch (e) { alert("Error: " + e.message); }
+        }
+
+        function prepareFirstCodeSilent() {
+            const currentCode = codesQueue[0];
+            document.getElementById('code-value').innerText = currentCode;
+            document.getElementById('category-name').innerText = "Código Activo:";
+            document.getElementById('queue-info').innerText = `Código 1 de ${codesQueue.length}`;
+            tapCount = 0;
+            updateDisplay();
+        }
+
+        function setupCode() {
+            const currentCode = codesQueue[currentCodeIndex];
+            const textToDisplay = textsMap[currentCode];
+
+            document.getElementById('code-value').innerText = currentCode;
+            document.getElementById('category-name').innerText = "Código Activo:";
+            document.getElementById('queue-info').innerText = `Código ${currentCodeIndex + 1} de ${codesQueue.length}`;
+            
+            tapCount = 0;
+            updateDisplay();
+
+            if (textToDisplay) {
+                openModal(textToDisplay, 'text');
+                document.getElementById('modal-close-btn').innerText = "OK - CONTAR";
             } else {
+                startCounting();
+            }
+        }
+
+        function openModal(content, type) {
+            const body = document.getElementById('modal-body');
+            body.innerHTML = '';
+            
+            if (type === 'text') {
+                const div = document.createElement('div');
+                div.className = 'modal-text';
+                div.innerText = content;
+                body.appendChild(div);
+            } else if (type === 'image') {
+                const img = document.createElement('img');
+                img.src = `./static-resources/${content}`;
+                img.className = 'img-full';
+                body.appendChild(img);
+            }
+            
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.getElementById('tap-btn').disabled = true;
+        }
+
+        function closeModal() {
+            const btnText = document.getElementById('modal-close-btn').innerText;
+            document.getElementById('modal-overlay').style.display = 'none';
+
+            if (btnText.includes("FINALIZAR")) {
+                location.reload();
+            } else {
+                startCounting();
+            }
+        }
+
+        function startCounting() {
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('counter-text').style.display = 'block';
+            document.getElementById('tap-btn').disabled = false;
+        }
+
+        function handleTap() {
+            tapCount++;
+            if (tapCount >= GOAL) {
+                nextCode();
+            } else {
+                updateDisplay();
+            }
+        }
+
+        function restartToBeginning() {
+            if (activePrefix) {
+                currentCodeIndex = 0;
                 setupCode();
             }
         }
-    } catch (e) { alert("Error al cargar: " + e.message); }
-}
+
+        function nextCode() {
+            currentCodeIndex++;
+            if (currentCodeIndex < codesQueue.length) {
+                setupCode();
+            } else {
+                if (thanksContent) {
+                    const isImage = /\.(jpg|jpeg|png|gif)$/i.test(thanksContent);
+                    openModal(thanksContent.replace(/\\n/g, '\n'), isImage ? 'image' : 'text');
+                    document.getElementById('modal-close-btn').innerText = "OK - FINALIZAR";
+                } else {
+                    alert("¡Fin de la lista!");
+                    location.reload();
+                }
+            }
+        }
 
         function updateDisplay() {
             document.getElementById('counter-text').innerText = `Repeticiones: ${tapCount} / ${GOAL}`;
             const percentage = (tapCount / GOAL) * 100;
             document.getElementById('progress-bar').style.width = percentage + '%';
         }
-
-function prepareFirstCodeSilent() {
-    const currentCode = codesQueue[0];
-    document.getElementById('code-value').innerText = currentCode;
-    document.getElementById('category-name').innerText = "Código Activo:";
-    document.getElementById('queue-info').innerText = `Código 1 de ${codesQueue.length}`;
-    tapCount = 0;
-    updateDisplay();
-}
     </script>
 </body>
 </html>
