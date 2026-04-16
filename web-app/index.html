@@ -5,119 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Códigos Sagrados Pro</title>
     <style>
-        :root { --primary: #007bff; --dark: #333; --success: #4caf50; }
+        :root { --primary: #007bff; --dark: #333; --success: #4caf50; --accent: #6f42c1; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; }
         header { background: var(--primary); color: white; padding: 1rem; display: flex; align-items: center; position: fixed; width: 100%; top: 0; z-index: 100; }
-        .menu-btn { cursor: pointer; padding: 10px; display: flex; flex-direction: column; gap: 5px; }
-        .menu-btn div { width: 25px; height: 3px; background: white; }
         
         .sidebar { position: fixed; left: -260px; top: 0; width: 250px; height: 100%; background: var(--dark); color: white; transition: 0.3s; z-index: 200; padding-top: 60px; }
         .sidebar.active { left: 0; }
         .sidebar a { display: block; padding: 15px 25px; color: white; text-decoration: none; border-bottom: 1px solid #444; cursor: pointer; }
         
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 150; }
-        .overlay.active { display: block; }
-
         .main-content { padding: 100px 20px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
+        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 380px; }
         
-        #progress-container { width: 100%; background: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 15px; }
+        /* Estilo para el Texto Previo */
+        #text-display { font-size: 1.1rem; color: var(--dark); margin: 20px 0; line-height: 1.5; font-style: italic; display: none; background: #f8f9fa; padding: 15px; border-left: 5px solid var(--accent); border-radius: 5px; }
+        
+        #progress-container { width: 100%; background: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 15px; display: none; }
         #progress-bar { width: 0%; height: 100%; background: var(--success); transition: width 0.2s; border-radius: 10px; }
         
         button { padding: 20px; font-size: 1.5rem; cursor: pointer; border: none; border-radius: 12px; background: var(--primary); color: white; width: 100%; touch-action: manipulation; }
-        button:active { transform: scale(0.95); background: #0056b3; }
         .info { font-size: 0.8rem; color: #666; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="menu-btn" onclick="toggleMenu()"><div></div><div></div><div></div></div>
+        <div class="menu-btn" onclick="toggleMenu()" style="cursor:pointer; padding:10px;">☰</div>
         <span>Códigos Sagrados</span>
     </header>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-    <nav class="sidebar" id="sidebar">
+    <div class="sidebar" id="sidebar">
         <a onclick="loadCategory('CODIGO.CRAYON')">Código Sagrado Crayon</a>
         <a onclick="loadCategory('CODIGO.DESBLOQUEO')">Desbloqueo de Códigos</a>
         <a onclick="loadCategory('CODIGO.DINERO')">Flujo de Dinero</a>
-    </nav>
+    </div>
 
     <div class="main-content">
         <div class="card">
             <h3 id="category-name">Selecciona categoría</h3>
             <h1 id="code-value">---</h1>
-            <div id="progress-container"><div id="progress-bar"></div></div>
-            <button id="tap-btn" onclick="handleTap()" disabled>TAP</button>
-            <p id="counter-text">Repeticiones: 0 / 45</p>
-            <p class="info" id="queue-info">Códigos en lista: 0</p>
+            
+            <div id="text-display"></div> <div id="progress-container"><div id="progress-bar"></div></div>
+            <button id="tap-btn" onclick="handleTap()" disabled>INICIAR</button>
+            <p id="counter-text" style="display:none;">Repeticiones: 0 / 45</p>
+            <p class="info" id="queue-info">Listo para comenzar</p>
         </div>
     </div>
 
     <script>
         let codesQueue = [];
+        let textsMap = {};
         let currentCodeIndex = 0;
         let tapCount = 0;
+        let isViewingText = false;
         const GOAL = 45;
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
 
         async function loadCategory(prefix) {
-            toggleMenu();
+            if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
             try {
-                // Fetch del archivo .resource (Amplify lo sirve como estático)
                 const response = await fetch('./static-resources/codigos.resource');
                 const text = await response.text();
-                
-                // Parsing: Filtramos las líneas que empiecen con el prefijo
-                codesQueue = text.split('\n')
-                    .filter(line => line.toUpperCase().startsWith(prefix.toUpperCase()))
-                    .map(line => line.split('=')[1]?.trim())
-                    .filter(val => val !== undefined);
+                const lines = text.split('\n');
+
+                codesQueue = [];
+                textsMap = {};
+
+                // Parsing avanzado
+                lines.forEach(line => {
+                    if (line.toUpperCase().includes('.TEXTO=')) {
+                        // Guardar textos en un mapa usando el código como llave
+                        const parts = line.split('.TEXTO=');
+                        const key = parts[0].split('.').pop(); // Extrae el número 860907
+                        textsMap[key] = parts[1].trim();
+                    } else if (line.toUpperCase().startsWith(prefix.toUpperCase()) && line.includes('=')) {
+                        // Guardar códigos en la cola
+                        const val = line.split('=')[1].trim();
+                        codesQueue.push(val);
+                    }
+                });
 
                 if (codesQueue.length > 0) {
                     currentCodeIndex = 0;
-                    startCode();
-                } else {
-                    alert("No se encontraron códigos para esta categoría.");
+                    setupCode();
                 }
-            } catch (error) {
-                console.error("Error cargando recursos:", error);
-                alert("Error al conectar con el servidor de recursos.");
-            }
+            } catch (e) { alert("Error cargando recursos"); }
         }
 
-        function startCode() {
-            tapCount = 0;
-            document.getElementById('category-name').innerText = "Activando Código:";
-            document.getElementById('code-value').innerText = codesQueue[currentCodeIndex];
-            document.getElementById('tap-btn').disabled = false;
+        function setupCode() {
+            const currentCode = codesQueue[currentCodeIndex];
+            const textToDisplay = textsMap[currentCode];
+
+            document.getElementById('code-value').innerText = currentCode;
+            document.getElementById('category-name').innerText = "Código Activo:";
             document.getElementById('queue-info').innerText = `Código ${currentCodeIndex + 1} de ${codesQueue.length}`;
+
+            if (textToDisplay) {
+                // Estado: Ver Texto
+                isViewingText = true;
+                document.getElementById('text-display').innerText = textToDisplay;
+                document.getElementById('text-display').style.display = 'block';
+                document.getElementById('progress-container').style.display = 'none';
+                document.getElementById('counter-text').style.display = 'none';
+                document.getElementById('tap-btn').innerText = "LEÍDO - EMPEZAR";
+            } else {
+                // Estado: Conteo directo
+                startCounting();
+            }
+            document.getElementById('tap-btn').disabled = false;
+        }
+
+        function startCounting() {
+            isViewingText = false;
+            tapCount = 0;
+            document.getElementById('text-display').style.display = 'none';
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('counter-text').style.display = 'block';
+            document.getElementById('tap-btn').innerText = "TAP";
             updateDisplay();
         }
 
         function handleTap() {
-            tapCount++;
-            if (tapCount >= GOAL) {
-                nextCode();
+            if (isViewingText) {
+                startCounting();
             } else {
-                updateDisplay();
+                tapCount++;
+                if (tapCount >= GOAL) {
+                    nextCode();
+                } else {
+                    updateDisplay();
+                }
             }
         }
 
         function nextCode() {
             currentCodeIndex++;
             if (currentCodeIndex < codesQueue.length) {
-                alert("¡Código completado! Iniciando siguiente...");
-                startCode();
+                setupCode();
             } else {
                 document.getElementById('code-value').innerText = "¡FIN!";
                 document.getElementById('tap-btn').disabled = true;
-                alert("Has terminado todos los códigos de esta lista.");
+                document.getElementById('progress-container').style.display = 'none';
+                document.getElementById('counter-text').style.display = 'none';
             }
         }
 
