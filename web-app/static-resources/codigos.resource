@@ -1,7 +1,7 @@
 CODIGO.CRAYON=860907
 CODIGO.CRAYON.860907.TEXTO=Declaración: Llama violeta plateada de los mil soles, transmuta todo karma, creencia y emoción heredada o adquirida que no me esté permitiendo tener una relación con el dienro. código sagrado 860907
 CODIGO.CRAYON=773
-CODIGO.CRAYON=773.TEXTO=Decreto: Dios multiplica mi bien en exceso. \n espiritu de ruina y miseria (liberarse). código sagrado 773
+CODIGO.CRAYON.773.TEXTO=Decreto: Dios multiplica mi bien en exceso. \n espiritu de ruina y miseria (liberarse). código sagrado 773
 CODIGO.CRAYON=61316
 CODIGO.CRAYON.61316.TEXTO=Disolver y eliminar de raiz implantes que me impiden la conexion con el dinero. codigos sagrados 61316, 541280 y 73016.
 CODIGO.CRAYON=541280
