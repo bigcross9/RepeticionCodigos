@@ -41,7 +41,7 @@
     </header>
 
     <nav class="sidebar" id="sidebar">
-        <a onclick="loadCategory('CODIGO.CRAYON')">Código Sagrado Crayon</a>
+        <a onclick="loadCategory('CODIGO.AGESTA')">Códigos Sagrados Agesta - Flujo de dinero</a>
         <a onclick="loadCategory('CODIGO.DESBLOQUEO')">Desbloqueo de Códigos</a>
         <a onclick="loadCategory('CODIGO.DINERO')">Flujo de Dinero</a>
     </nav>
@@ -117,7 +117,7 @@
             const textToDisplay = textsMap[currentCode];
 
             document.getElementById('code-value').innerText = currentCode;
-            document.getElementById('category-name').innerText = "Código Activo:";
+            document.getElementById('category-name').innerText = "Código Sagrado:";
             document.getElementById('queue-info').innerText = `Código ${currentCodeIndex + 1} de ${codesQueue.length}`;
             
             tapCount = 0;
